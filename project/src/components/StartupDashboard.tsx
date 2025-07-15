@@ -35,7 +35,9 @@ import {
   EyeIcon,
   StarIcon,
   TrendingUpIcon,
-  UsersIcon
+  UsersIcon,
+  MailIcon,
+  PhoneIcon
 } from "lucide-react";
 
 // ==================== INTERFACES ====================
@@ -2138,13 +2140,13 @@ const HelpPage = () => {
   const contactInfo = [
     {
       icon: MailIcon,
-      label: { en: 'Email Support', am: 'የኢሜይል ድጋፍ' },
+      label: { en: 'Email Support', am: 'የኢሜይል ድጋ፽' },
       value: 'support@wofekomech.et',
       action: 'mailto:support@wofekomech.et'
     },
     {
       icon: PhoneIcon,
-      label: { en: 'Phone Support', am: 'የስልክ ድጋፍ' },
+      label: { en: 'Phone Support', am: 'የስልክ ድጋ፽' },
       value: '+251 11 123 4567',
       action: 'tel:+251111234567'
     },
@@ -2159,7 +2161,7 @@ const HelpPage = () => {
   return (
     <div>
       <h1 className="text-2xl font-bold text-gray-900 mb-6">
-        {t({ en: "Help & Support", am: "እርዳታ እና ድጋፍ" })}
+        {t({ en: "Help & Support", am: "እርዳታ እና ድጋ፽" })}
       </h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -2183,7 +2185,7 @@ const HelpPage = () => {
         {/* Contact Support */}
         <Card>
           <CardHeader>
-            <CardTitle>{t({ en: "Contact Support", am: "ድጋፍን ያግኙ" })}</CardTitle>
+            <CardTitle>{t({ en: "Contact Support", am: "ድጋ፽ን ያግኙ" })}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -2233,4 +2235,160 @@ const HelpPage = () => {
   );
 };
 
-// ==================== MAIN DASHBOARD COMPONENT =======
+// ==================== MAIN DASHBOARD COMPONENT ====================
+export const StartupDashboard: React.FC<StartupDashboardProps> = ({ user, onLogout }) => {
+  const { t } = useLanguage();
+  const [activeSection, setActiveSection] = useState('dashboard');
+
+  const sidebarItems = [
+    { 
+      id: 'dashboard',
+      icon: BarChart3Icon, 
+      label: { en: 'Dashboard', am: 'ዳሽቦርድ' }
+    },
+    { 
+      id: 'tasks',
+      icon: CheckCircleIcon, 
+      label: { en: 'Tasks', am: 'ተግባራት' }
+    },
+    { 
+      id: 'team',
+      icon: UsersIcon, 
+      label: { en: 'My Team', am: 'የእኔ ቡድን' }
+    },
+    { 
+      id: 'mentor',
+      icon: MessageSquareIcon, 
+      label: { en: 'Connect With Mentor', am: 'ከአማካሪ ጋር ተገናኝ' }
+    },
+    { 
+      id: 'profile',
+      icon: UserIcon, 
+      label: { en: 'My Profile', am: 'የእኔ መገለጫ' }
+    },
+    { 
+      id: 'settings',
+      icon: SettingsIcon, 
+      label: { en: 'Settings', am: 'ቅንብሮች' }
+    },
+    { 
+      id: 'help',
+      icon: HelpCircleIcon, 
+      label: { en: 'Help', am: 'እርዳታ' }
+    },
+    { 
+      id: 'logout',
+      icon: LogOutIcon, 
+      label: { en: 'Logout', am: 'ውጣ' }, 
+      onClick: onLogout
+    }
+  ];
+
+  const renderActiveSection = () => {
+    switch (activeSection) {
+      case 'dashboard':
+        return <DashboardPage user={user} />;
+      case 'tasks':
+        return <TasksPage />;
+      case 'team':
+        return <TeamPage />;
+      case 'mentor':
+        return <MentorPage />;
+      case 'profile':
+        return <ProfilePage user={user} />;
+      case 'settings':
+        return <SettingsPage />;
+      case 'help':
+        return <HelpPage />;
+      default:
+        return <DashboardPage user={user} />;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Sidebar */}
+      <div className="w-64 bg-white border-r border-gray-200 flex flex-col">
+        <div className="p-6 border-b border-gray-200">
+          <h1 className="text-2xl font-bold text-orange-600">WofeKomech</h1>
+          <p className="text-sm text-gray-600">{t({ en: "Startup Dashboard", am: "የስታርት አፕ ዳሽቦርድ" })}</p>
+        </div>
+        
+        <nav className="flex-1 px-4 py-6">
+          {sidebarItems.map((item) => (
+            <div
+              key={item.id}
+              className={`flex items-center gap-3 px-3 py-3 rounded-lg cursor-pointer transition-colors mb-2 ${
+                activeSection === item.id ? 'bg-orange-100 text-orange-700' : 'text-gray-600 hover:bg-gray-100'
+              }`}
+              onClick={() => {
+                if (item.onClick) {
+                  item.onClick();
+                } else {
+                  setActiveSection(item.id);
+                }
+              }}
+            >
+              <item.icon className="w-5 h-5" />
+              <span className="text-sm font-medium">{t(item.label)}</span>
+            </div>
+          ))}
+        </nav>
+
+        {/* User Profile Card */}
+        <div className="p-4 border-t border-gray-200">
+          <div className="flex items-center gap-3 p-3 bg-orange-50 rounded-lg">
+            <img
+              src={user.avatar || "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100"}
+              alt="User"
+              className="w-10 h-10 rounded-full object-cover"
+            />
+            <div className="flex-1">
+              <p className="text-sm font-medium text-gray-900">{user.name}</p>
+              <p className="text-xs text-gray-500">{user.company}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col">
+        {/* Header */}
+        <header className="bg-white border-b border-gray-200 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">
+                {sidebarItems.find(item => item.id === activeSection)?.label ? 
+                  t(sidebarItems.find(item => item.id === activeSection)!.label) : 
+                  t({ en: 'Dashboard', am: 'ዳሽቦርድ' })
+                }
+              </h1>
+            </div>
+            
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Input
+                  placeholder={t({ en: 'Search...', am: 'ፈልግ...' })}
+                  className="pl-10 w-64"
+                />
+              </div>
+              
+              <Button variant="ghost" size="icon" className="relative">
+                <BellIcon className="w-5 h-5" />
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                  3
+                </span>
+              </Button>
+            </div>
+          </div>
+        </header>
+
+        {/* Dashboard Content */}
+        <main className="flex-1 p-6 overflow-y-auto">
+          {renderActiveSection()}
+        </main>
+      </div>
+    </div>
+  );
+};
